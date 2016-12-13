@@ -177,4 +177,37 @@ public class TeacherMysqlDao implements TeacherDao {
     }
   }
 
+
+  public Teacher getDetail(String name) throws Exception {
+    Connection con = ds.getConnection();
+    Teacher teacher = null;
+
+    try (
+        PreparedStatement stmt = con.prepareStatement(
+            "select * from ex_teachers where name=?"); ){
+
+      stmt.setString(1, name);
+      ResultSet rs = stmt.executeQuery();
+
+      if (rs.next()) {
+        teacher = new Teacher();
+        
+        teacher.setName(rs.getString("name"));
+        teacher.setLectureName(rs.getString("lec"));
+        teacher.setJobCareer(rs.getString("jobcr"));
+        teacher.setLectureCareer(rs.getString("leccr"));
+        teacher.setBook(rs.getString("book"));
+        teacher.setSchool(rs.getString("schl"));
+        teacher.setAppraisal(rs.getString("appr"));
+        teacher.setWebsite(rs.getString("wbs"));
+        teacher.setPrize(rs.getString("prz"));
+        
+      }
+      rs.close();
+    } finally {
+      ds.returnConnetion(con);
+    }
+    return teacher;
+  }
+
 }

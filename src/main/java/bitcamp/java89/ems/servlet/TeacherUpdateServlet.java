@@ -21,36 +21,55 @@ public class TeacherUpdateServlet extends HttpServlet {
   ServletConfig config;
 
   @Override
-  protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+  protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
+    request.setCharacterEncoding("UTF-8");
+    
+    Teacher teacher = new Teacher();
+    teacher.setName(request.getParameter("name"));
+    teacher.setLectureName(request.getParameter("lectureName"));
+    teacher.setJobCareer(request.getParameter("jobCareer"));
+    teacher.setLectureCareer(request.getParameter("lectureCareer"));
+    teacher.setBook(request.getParameter("book"));
+    teacher.setSchool(request.getParameter("school"));
+    teacher.setAppraisal(request.getParameter("appraisal"));
+    teacher.setWebsite(request.getParameter("website"));
+    teacher.setPrize(request.getParameter("prize"));
+
+
+    response.setHeader("Refresh", "1;url=list");
+    response.setContentType("text/html;charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    
+    
+    out.println("<!DOCTYPE html>");
+    out.println("<html>");
+    out.println("<head>");
+    out.println("<meta charset='UTF-8'>");
+    out.println("<title>강사관리-수정</title>");
+    out.println("</head>");
+    out.println("<body>");
+    out.println("<h1>등록 결과</h1>");
+
+    
     try {
       TeacherMysqlDao teacherDao = TeacherMysqlDao.getInstance();
-      response.setContentType("text/plain;charset=UTF-8");
-      PrintWriter out = response.getWriter();
       
-      if (!teacherDao.existName(request.getParameter("name"))) {
-        out.println("입력하신 성함의 강사님 정보을 찾지 못했습니다.");
-        return;
+      if (!teacherDao.existName(teacher.getName())) {
+        throw new Exception("해당 이름의 강사 데이터가 없습니다.");
       }
   
-      Teacher teacher = new Teacher();
-      teacher.setName(request.getParameter("name"));
-      teacher.setLectureName(request.getParameter("lectureName"));
-      teacher.setJobCareer(request.getParameter("jobCareer"));
-      teacher.setLectureCareer(request.getParameter("lectureCareer"));
-      teacher.setBook(request.getParameter("book"));
-      teacher.setSchool(request.getParameter("school"));
-      teacher.setAppraisal(request.getParameter("appraisal"));
-      teacher.setWebsite(request.getParameter("website"));
-      teacher.setPrize(request.getParameter("prize"));
-  
-  
       teacherDao.update(teacher);
-      out.println("변경하였습니다.");
+      out.println("<p>변경하였습니다.</p>");
       
       
     } catch (Exception e) {
-      throw new ServletException(e);
+      out.printf("<p>%s</p>\n", e.getMessage());
     }
+    
+
+    out.println("</body>");
+    out.println("</html>");
   }
 
 }
