@@ -21,32 +21,48 @@ public class ContactUpdateServlet extends HttpServlet {
   ServletConfig config;
 
   @Override
-  protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+  protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    
+    request.setCharacterEncoding("UTF-8");
+    
+    Contact contact = new Contact();
+    contact.setEmail(request.getParameter("email"));
+    contact.setName(request.getParameter("name"));
+    contact.setPosition(request.getParameter("position"));
+    contact.setTel(request.getParameter("tel"));
+    
+    response.setHeader("Refresh", "1;url=list");
+    response.setContentType("text/html;charset=UTF-8");
+    PrintWriter out = response.getWriter();
+    
+    out.println("<!DOCTYPE html>");
+    out.println("<html>");
+    out.println("<head>");
+    out.println("<meta charset='UTF-8'>");
+    out.println("<title>연락처관리-등록</title>");
+    out.println("</head>");
+    out.println("<body>");
+    out.println("<h1>등록 결과</h1>");
+    
+    
     try {
       ContactMysqlDao contactDao = ContactMysqlDao.getInstance();
-      response.setContentType("text/plain;charset=UTF-8");
-      PrintWriter out = response.getWriter();
       
-      
-      if (!contactDao.existEmail(request.getParameter("email"))) {
-        out.println("이메일을 찾지 못했습니다.");
-        return;
+      if (!contactDao.existEmail(contact.getEmail())) {
+        throw new Exception ("해당 이메일의 연락처가 없습니다.");
       }
 
-      Contact contact = new Contact();
-      contact.setEmail(request.getParameter("email"));
-      contact.setName(request.getParameter("name"));
-      contact.setPosition(request.getParameter("position"));
-      contact.setTel(request.getParameter("tel"));
-
-
       contactDao.update(contact);
-      out.println("변경 하였습니다.");
+      out.println("<p>변경 하였습니다.</p>");
       
       
     } catch (Exception e) {
-      throw new ServletException(e);
+      out.println(e.getMessage());
     }
+    
+    
+    out.println("</body>");
+    out.println("</html>");
   }
 
 }

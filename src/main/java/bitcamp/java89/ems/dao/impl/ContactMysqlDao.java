@@ -155,5 +155,32 @@ public class ContactMysqlDao implements ContactDao {
     }
   }
 
+
+  @Override
+  public Contact getDetail(String email) throws Exception {
+    Connection con = ds.getConnection();
+    Contact contact = null;
+
+    try (
+        PreparedStatement stmt = con.prepareStatement(
+            "select posi, name, tel, email from ex_contacts where email=?"); ){
+
+      stmt.setString(1, email);
+      ResultSet rs = stmt.executeQuery();
+
+      if (rs.next()) {
+        contact = new Contact();
+        contact.setName(rs.getString("name"));
+        contact.setPosition(rs.getString("posi"));
+        contact.setTel(rs.getString("tel"));
+        contact.setEmail(rs.getString("email"));
+      }
+      rs.close();
+    } finally {
+      ds.returnConnetion(con);
+    }
+    return contact;
+  }
+
 }
 
