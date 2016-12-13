@@ -5,20 +5,23 @@ import java.io.PrintWriter;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import bitcamp.java89.ems.dao.impl.TeacherMysqlDao;
 import bitcamp.java89.ems.vo.Teacher;
 
 
 @WebServlet("/teacher/add")
-public class TeacherAddServlet extends AbstractServlet {
+public class TeacherAddServlet extends HttpServlet {
+
+  private static final long serialVersionUID = 1L;
   ServletConfig config;
 
   @Override
-  public void service(ServletRequest request, ServletResponse response) throws ServletException, IOException {
+  protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     try {
       TeacherMysqlDao teacherDao = TeacherMysqlDao.getInstance();
       response.setContentType("text/plain;charset=UTF-8");
